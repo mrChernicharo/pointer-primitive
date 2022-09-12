@@ -3,11 +3,11 @@ import { createMemo } from 'solid-js';
 import { createPerPointerListeners } from '@solid-primitives/pointer';
 
 export default function Slot(props: any) {
-	let containerRef!: HTMLDivElement;
 	let slotRef!: HTMLDivElement;
 	let middleRef!: HTMLDivElement;
 	let topRef!: HTMLDivElement;
 	let bottomRef!: HTMLDivElement;
+
 	const [state, setState] = createStore({
 		pos: {
 			x: 0,
@@ -107,6 +107,7 @@ export default function Slot(props: any) {
 				class="h-[100%] flex justify-center items-center"
 				style={{
 					'touch-action': 'none',
+					'user-select': 'none',
 				}}
 			>
 				I'm draggable!
