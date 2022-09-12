@@ -47,6 +47,7 @@ export const App = () => {
 			onUp(() => {
 				last = null;
 				setStore('gesture', 'idle');
+				console.log('dropped', store.slotId);
 			});
 			onLeave(() => (last = null));
 			onMove(({ x, y, movementY, movementX }) => {
@@ -99,31 +100,13 @@ export const App = () => {
 					let topRef!: HTMLDivElement;
 					let bottomRef!: HTMLDivElement;
 
-					const [state, setState] = createStore(slot);
-
 					// MIDDLE LISTENER
 					createPerPointerListeners({
 						target: () => middleRef,
 						onEnter(e, { onDown, onMove, onUp, onLeave }) {
-							let last: { x: number; y: number } | null;
 							onDown(({ x, y }) => {
 								setStore('slotId', slot.id);
 								setStore('gesture', 'drag:middle');
-								last = { x, y };
-							});
-							onUp(() => {
-								last = null;
-							});
-							onLeave(() => {
-								last = null;
-							});
-							onMove(({ x, y }) => {
-								if (!last) return;
-								// setState('pos', p => ({
-								// 	x: p.x + x - last!.x,
-								// 	y: p.y + y - last!.y,
-								// }));
-								last = { x, y };
 							});
 						},
 					});
@@ -132,28 +115,9 @@ export const App = () => {
 					createPerPointerListeners({
 						target: () => topRef,
 						onEnter(e, { onDown, onMove, onUp, onLeave }) {
-							let last: { x: number; y: number } | null;
 							onDown(({ x, y }) => {
 								setStore('slotId', slot.id);
 								setStore('gesture', 'drag:top');
-								last = { x, y };
-							});
-							onUp(() => {
-								last = null;
-							});
-							onLeave(() => {
-								last = null;
-							});
-							onMove(({ x, y }) => {
-								if (!last) return;
-								// setState('pos', p => ({
-								// 	x: p.x,
-								// 	y: p.y + y - last!.y,
-								// 	// y: p.y,
-								// }));
-
-								// setState('height', h => h + (last!.y - y));
-								last = { x, y };
 							});
 						},
 					});
@@ -162,35 +126,16 @@ export const App = () => {
 					createPerPointerListeners({
 						target: () => bottomRef,
 						onEnter(e, { onDown, onMove, onUp, onLeave }) {
-							let last: { x: number; y: number } | null;
 							onDown(({ x, y }) => {
 								setStore('slotId', slot.id);
 								setStore('gesture', 'drag:bottom');
-								last = { x, y };
-							});
-							onUp(() => {
-								last = null;
-							});
-							onLeave(() => {
-								last = null;
-							});
-							onMove(({ x, y }) => {
-								if (!last) return;
-
-								// setState('pos', p => ({
-								// 	x: p.x,
-								// 	y: p.y,
-								// }));
-
-								// setState('height', h => h + (y - last!.y));
-								last = { x, y };
 							});
 						},
 					});
 
-					const height = createMemo(() => `${state.height}px`);
+					const height = createMemo(() => `${slot.height}px`);
 					const transform = createMemo(
-						() => `translate(${state.pos.x}px, ${state.pos.y}px)`
+						() => `translate(${slot.pos.x}px, ${slot.pos.y}px)`
 					);
 
 					return (
@@ -201,7 +146,7 @@ export const App = () => {
 							style={{
 								height: height(),
 								transform: transform(),
-								transition: 'ease-out .2s',
+								// transition: 'transform ease-out .2s',
 							}}
 						>
 							<div
@@ -213,13 +158,18 @@ export const App = () => {
 							></div>
 							<div
 								ref={middleRef}
-								class="h-[100%] flex justify-center items-center"
+								class="h-[100%] flex flex-col justify-center items-center"
 								style={{
 									'touch-action': 'none',
 									'user-select': 'none',
 								}}
 							>
-								I'm draggable!
+								<p>{slot.id}</p>
+								<p>
+									{store.slotId === slot.id
+										? store.gesture
+										: 'idle'}
+								</p>
 							</div>
 							<div
 								ref={bottomRef}
