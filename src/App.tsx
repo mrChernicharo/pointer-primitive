@@ -134,6 +134,8 @@ export const App = () => {
 					});
 
 					const height = createMemo(() => `${slot.height}px`);
+					const top = createMemo(() => `${slot.pos.y}px`);
+					const left = createMemo(() => `${slot.pos.x}px`);
 					const transform = createMemo(
 						() => `translate(${slot.pos.x}px, ${slot.pos.y}px)`
 					);
@@ -142,10 +144,11 @@ export const App = () => {
 						<div
 							id={slot.id}
 							ref={slotRef}
-							class="absolute"
+							class="absolute bg-blue-600"
 							style={{
-								height: height(),
-								transform: transform(),
+								top: top(),
+								left: left(),
+								// transform: transform(),
 								// transition: 'transform ease-out .2s',
 							}}
 						>
@@ -158,10 +161,11 @@ export const App = () => {
 							></div>
 							<div
 								ref={middleRef}
-								class="h-[100%] flex flex-col justify-center items-center"
+								class="h-[100%] flex flex-col justify-center items-center "
 								style={{
 									'touch-action': 'none',
 									'user-select': 'none',
+									height: height(),
 								}}
 							>
 								<p>{slot.id}</p>
